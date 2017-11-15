@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -20,12 +21,30 @@ import javax.net.ssl.HttpsURLConnection;
  * SRP
  */
 
+
+
 public class MovieDatasource {
-    private final String address = "https://api.androidhive.info/json/movies.json";
+    private static final String address = "https://api.androidhive.info/json/movies.json";
 
-    private ArrayList<Movie> getMovies() throws IOException, JSONException { //Error vs exception //throwable -> Exception, Error
+
+    public static void getMovies(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ArrayList<Movie> movies = getMoviesSync();
+                    System.out.println(movies);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private static ArrayList<Movie> getMoviesSync() throws IOException, JSONException { //Error vs exception //throwable -> Exception, Error
         ArrayList<Movie> movies = new ArrayList<>();
-
         URL url = new URL(address);
 
         //polymorphic method, //con.getResponseCode()...
@@ -42,12 +61,20 @@ public class MovieDatasource {
             int releaseYear = movieObject.getInt("releaseYear");
             String image = movieObject.getString("image");
             double rating = movieObject.getDouble("rating");
-            movies.add(new Movie(title, image, releaseYear, rating));
+            //TODO: Genre...
+            JSONArray genreArray = movieObject.getJSONArray("genre");
+            String[] genres = new String[genreArray.length()];
+
+            for (int j = 0; j < genreArray.length(); j++) {
+                String g = genreArray.getString(j);
+                genres[j] = g;
+            }
+            movies.add(new Movie(title, image, releaseYear, rating, genres));
         }
         return movies;
     }
     //read an input stream to a string
-    private String read(InputStream in) throws IOException {
+    private static String read(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
