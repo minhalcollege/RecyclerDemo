@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">"Recycler Demo "</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">Title</string>
+    <string name="year">Year</string>
+    <string name="poster">Poster</string>
+</resources>
