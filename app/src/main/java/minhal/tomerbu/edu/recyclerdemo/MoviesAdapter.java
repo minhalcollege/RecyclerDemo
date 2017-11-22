@@ -59,7 +59,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     //static inner class
     //JOB title: findView by id...
     public static class MoviesViewHolder extends RecyclerView.ViewHolder{
-
         //no encapsulation for efficiency:
         TextView tvTitle, tvYear;
         ImageView ivPoster;

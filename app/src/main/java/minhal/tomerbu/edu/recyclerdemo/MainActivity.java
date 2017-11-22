@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -42,12 +44,30 @@ public class MainActivity extends AppCompatActivity implements MovieDatasource.O
             public void run() {
                 //code that runs on the UI (Main) Thread...!
                 if (movies != null)
-                    Toast.makeText(MainActivity.this, movies.toString(), Toast.LENGTH_SHORT).show();
+                    updateUI(movies);
                 else if (e != null){
                     Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void updateUI(ArrayList<Movie> movies) {
+        //1) find the recycler by id.
+        RecyclerView rvMovies = (RecyclerView) findViewById(R.id.rvMovies);
+
+
+        //the adapter takes movies and provides Views for the movies.
+        //2) MoviesAdapter adapter = new Movies adapter (movies, context)
+        MoviesAdapter adapter = new MoviesAdapter(movies, this);
+
+        //3) recycler -> take the adapter.
+        rvMovies.setAdapter(adapter);
+
+        //4)
+        rvMovies.setLayoutManager(new LinearLayoutManager(null));
+
     }
 
     @Override
