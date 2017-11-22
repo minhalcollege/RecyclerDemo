@@ -25,19 +25,30 @@ public class MainActivity extends AppCompatActivity implements MovieDatasource.O
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-       MovieDatasource.getMovies(this);
+        MovieDatasource.getMovies(this);
     }
+
 
     @Override
-    public void onMoviesArrived(@Nullable ArrayList<Movie> movies, @Nullable Exception e) {
-        //we have the movies or an exception...
-        String name = Thread.currentThread().getName();
-        //The answer will be "Movies Worker"
+    public void onMoviesArrived(@Nullable final ArrayList<Movie> movies, @Nullable final Exception e) {
+        //The movies are received in a background thread.
 
-        //We Can't update the ui from a background thread.!
+        //runOnUIThread(Runnable runnable)
+        //run on UI thread... a method that runs code on the ui (main) thread.
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //code that runs on the UI (Main) Thread...!
+                if (movies != null)
+                    Toast.makeText(MainActivity.this, movies.toString(), Toast.LENGTH_SHORT).show();
+                else if (e != null){
+                    Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements MovieDatasource.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

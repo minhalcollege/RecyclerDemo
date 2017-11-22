@@ -35,32 +35,23 @@ public class MovieDatasource {
     private static final String address = "https://api.androidhive.info/json/movies.json";
 
     public static void getMovies(final OnMoviesArrivedListener listener){
-        //Secondary Thread.
-        //Must not update the UI...
-        //runOnUIThread.
+        //manifest permission (INTERNET)
 
-        //get the handler of the current thread.
-        Handler h = new Handler();
-
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    //action that takes a long time!
+                    //success (Exception is null): pass the movies to the listener:
                     ArrayList<Movie> movies = getMoviesSync();
-                    //notify the listener
-                    h.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    });
                     listener.onMoviesArrived(movies, null);
                 } catch (Exception e) {
+                   //error (movies are null): pass the exception to the listener:
                    listener.onMoviesArrived(null, e);
                 }
             }
-        }, "Movies Worker").start();
+        });
+
+        thread.start();
     }
 
     private static ArrayList<Movie> getMoviesSync() throws IOException, JSONException { //Error vs exception //throwable -> Exception, Error
