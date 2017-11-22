@@ -1,5 +1,8 @@
 package minhal.tomerbu.edu.recyclerdemo;
 
+import android.os.Handler;
+import android.support.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,26 +24,43 @@ import javax.net.ssl.HttpsURLConnection;
  * SRP
  */
 
-
-
 public class MovieDatasource {
+
+    //observer design pattern: loosely couple the listener.
+    public interface OnMoviesArrivedListener{
+        void onMoviesArrived(@Nullable ArrayList<Movie> movies, @Nullable Exception e);
+        //void onError(Exception e);
+    }
+
     private static final String address = "https://api.androidhive.info/json/movies.json";
 
+    public static void getMovies(final OnMoviesArrivedListener listener){
+        //Secondary Thread.
+        //Must not update the UI...
+        //runOnUIThread.
 
-    public static void getMovies(){
+        //get the handler of the current thread.
+        Handler h = new Handler();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    //action that takes a long time!
                     ArrayList<Movie> movies = getMoviesSync();
-                    System.out.println(movies);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    //notify the listener
+                    h.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+                    listener.onMoviesArrived(movies, null);
+                } catch (Exception e) {
+                   listener.onMoviesArrived(null, e);
                 }
             }
-        }).start();
+        }, "Movies Worker").start();
     }
 
     private static ArrayList<Movie> getMoviesSync() throws IOException, JSONException { //Error vs exception //throwable -> Exception, Error

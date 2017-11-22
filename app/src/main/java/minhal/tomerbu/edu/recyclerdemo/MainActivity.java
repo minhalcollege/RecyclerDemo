@@ -1,6 +1,7 @@
 package minhal.tomerbu.edu.recyclerdemo;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieDatasource.OnMoviesArrivedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-       MovieDatasource.getMovies();
+       MovieDatasource.getMovies(this);
     }
+
+    @Override
+    public void onMoviesArrived(@Nullable ArrayList<Movie> movies, @Nullable Exception e) {
+        //we have the movies or an exception...
+        String name = Thread.currentThread().getName();
+        //The answer will be "Movies Worker"
+
+        //We Can't update the ui from a background thread.!
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -34,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
