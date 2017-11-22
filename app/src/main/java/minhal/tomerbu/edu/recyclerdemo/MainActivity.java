@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements MovieDatasource.O
         //run on UI thread... a method that runs code on the ui (main) thread.
 
 
+
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements MovieDatasource.O
                 else if (e != null){
                     Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
+                    //TODO: present a dialog to the user... no internet
                 }
             }
         });
